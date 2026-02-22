@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getRandomWord, WORDS } from '../utils/words';
+import { getRandomWord, WORDS, isValidWord } from '../utils/words';
 
 export const useGameState = () => {
   const [solution, setSolution] = useState('');
@@ -37,6 +37,11 @@ export const useGameState = () => {
       if (currentGuess.length !== 5) return;
       
       const upperGuess = currentGuess.toUpperCase();
+      if (!isValidWord(upperGuess)) {
+        // TODO: Shake animation for invalid word
+        return;
+      }
+
       const newGuesses = [...guesses, upperGuess];
       setGuesses(newGuesses);
       setCurrentGuess('');
