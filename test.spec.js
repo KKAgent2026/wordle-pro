@@ -15,7 +15,8 @@ test('Wordle Pro basic render test', async ({ page }) => {
   await page.keyboard.type('REACT');
   await page.keyboard.press('Enter');
   
-  // Verify first row is filled (status classes: bg-correct, bg-present, bg-absent)
+  // Verify first row is filled
   const firstRowCells = gridRows.first().locator('div');
+  await expect(firstRowCells.first()).toHaveText('R');
   await expect(firstRowCells.first()).toHaveClass(/bg-(correct|present|absent)/);
 });
