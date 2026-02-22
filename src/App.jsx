@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect } from 'react';
+import Grid from './components/game/Grid';
+import Keyboard from './components/game/Keyboard';
+import { useGameState } from './hooks/useGameState';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const {
+    solution,
+    guesses,
+    currentGuess,
+    onKeyPress,
+    getLetterStatus,
+    getKeyboardStatus,
+    isGameOver,
+    isWon,
+  } = useGameState();
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      onKeyPress(e.key);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onKeyPress]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="min-h-screen bg-background flex flex-col items-center">
+      <header className="w-full border-b border-slate-800 py-4 mb-4">
+        <h1 className="text-4xl font-black text-white text-center tracking-tighter">
+          WORDLE <span className="text-correct">PRO</span>
+        </h1>
+      </header>
+
+      <main className="flex-1 flex flex-col items-center w-full max-w-lg">
+        <Grid
+          guesses={guesses}
+          currentGuess={currentGuess}
+          solution={solution}
+          getLetterStatus={getLetterStatus}
+        />
+
+        {isGameOver && (
+          <div className="mb-8 animate-bounce">
+            <p className="text-2xl font-bold text-white">
+              {isWon ? '🎉 Brilliant!' : `Game Over! Word: ${solution}`}
+            </p>
+          </div>
+        )}
+
+        <Keyboard onKeyPress={onKeyPress} statusMap={getKeyboardStatus()} />
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
