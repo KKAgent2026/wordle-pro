@@ -8,7 +8,7 @@ test('Wordle Pro basic render test', async ({ page }) => {
   const gridRows = page.locator('.game-row');
   await expect(gridRows).toHaveCount(6);
   
-  const keys = page.locator('button');
+  const keys = page.locator('.keyboard-row button');
   await expect(keys).toHaveCount(28);
   
   // Type a word from the list to ensure it passes any validation

@@ -78,6 +78,30 @@ export const useGameState = () => {
     localStorage.setItem('wordle-pro-stats', JSON.stringify(stats));
   };
 
+  const getLetterStatus = (guess, index) => {
+    const char = guess[index];
+    if (solution[index] === char) return 'correct';
+    if (solution.includes(char)) return 'present';
+    return 'absent';
+  };
+
+  const getKeyboardStatus = () => {
+    const statusMap = {};
+    guesses.forEach((guess) => {
+      guess.split('').forEach((char, index) => {
+        const status = getLetterStatus(guess, index);
+        if (status === 'correct') {
+          statusMap[char] = 'correct';
+        } else if (status === 'present' && statusMap[char] !== 'correct') {
+          statusMap[char] = 'present';
+        } else if (status === 'absent' && !statusMap[char]) {
+          statusMap[char] = 'absent';
+        }
+      });
+    });
+    return statusMap;
+  };
+
   const resetGame = () => {
     setSolution(getRandomWord());
     setGuesses([]);
