@@ -18,7 +18,7 @@ const Keyboard = ({ onKeyPress, statusMap }) => {
   return (
     <div className="flex flex-col gap-2 items-center mt-auto pb-8 w-full max-w-2xl px-2">
       {rows.map((row, i) => (
-        <div key={i} className="flex gap-1.5 w-full justify-center">
+        <div key={i} className="flex gap-1.5 w-full justify-center keyboard-row">
           {row.map((key) => (
             <button
               key={key}

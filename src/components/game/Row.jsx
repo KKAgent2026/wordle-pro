@@ -5,7 +5,7 @@ const Row = ({ guess, solution, isCurrent, getLetterStatus }) => {
   const cells = Array(5).fill('');
 
   return (
-    <div className="flex gap-1.5 mb-1.5 justify-center">
+    <div className="flex gap-1.5 mb-1.5 justify-center game-row">
       {cells.map((_, i) => {
         let value = '';
         let status = '';
