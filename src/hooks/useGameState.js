@@ -8,55 +8,83 @@ export const useGameState = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isWon, setIsWon] = useState(false);
 
+  // Load game state from LocalStorage on mount
   useEffect(() => {
-    setSolution(getRandomWord());
+    const savedState = localStorage.getItem('wordle-pro-state');
+    if (savedState) {
+      const { solution: savedSolution, guesses: savedGuesses, isGameOver: savedGameOver, isWon: savedWon } = JSON.parse(savedState);
+      setSolution(savedSolution);
+      setGuesses(savedGuesses);
+      setIsGameOver(savedGameOver);
+      setIsWon(savedWon);
+    } else {
+      setSolution(getRandomWord());
+    }
   }, []);
+
+  // Save game state to LocalStorage whenever it changes
+  useEffect(() => {
+    if (solution) {
+      const stateToSave = { solution, guesses, isGameOver, isWon };
+      localStorage.setItem('wordle-pro-state', JSON.stringify(stateToSave));
+    }
+  }, [solution, guesses, isGameOver, isWon]);
 
   const onKeyPress = useCallback((key) => {
     if (isGameOver) return;
 
-    if (key === 'Enter') {
+    if (key === 'Enter' || key === 'ENTER') {
       if (currentGuess.length !== 5) return;
       
-      const newGuesses = [...guesses, currentGuess.toUpperCase()];
+      const upperGuess = currentGuess.toUpperCase();
+      const newGuesses = [...guesses, upperGuess];
       setGuesses(newGuesses);
       setCurrentGuess('');
 
-      if (currentGuess.toUpperCase() === solution) {
+      if (upperGuess === solution) {
         setIsWon(true);
         setIsGameOver(true);
+        updateStats(true, newGuesses.length);
       } else if (newGuesses.length >= 6) {
         setIsGameOver(true);
+        updateStats(false);
       }
-    } else if (key === 'Backspace') {
+    } else if (key === 'Backspace' || key === 'BACKSPACE' || key === 'DEL') {
       setCurrentGuess((prev) => prev.slice(0, -1));
     } else if (/^[A-Za-z]$/.test(key) && currentGuess.length < 5) {
       setCurrentGuess((prev) => (prev + key).toUpperCase());
     }
   }, [currentGuess, guesses, isGameOver, solution]);
 
-  const getLetterStatus = (guess, index) => {
-    const char = guess[index];
-    if (solution[index] === char) return 'correct';
-    if (solution.includes(char)) return 'present';
-    return 'absent';
+  const updateStats = (won, guessCount) => {
+    const stats = JSON.parse(localStorage.getItem('wordle-pro-stats')) || {
+      gamesPlayed: 0,
+      gamesWon: 0,
+      currentStreak: 0,
+      maxStreak: 0,
+      guessDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }
+    };
+
+    stats.gamesPlayed += 1;
+    if (won) {
+      stats.gamesWon += 1;
+      stats.currentStreak += 1;
+      stats.maxStreak = Math.max(stats.currentStreak, stats.maxStreak);
+      stats.guessDistribution[guessCount] += 1;
+    } else {
+      stats.currentStreak = 0;
+    }
+
+    localStorage.setItem('wordle-pro-stats', JSON.stringify(stats));
   };
 
-  const getKeyboardStatus = () => {
-    const statusMap = {};
-    guesses.forEach((guess) => {
-      guess.split('').forEach((char, index) => {
-        const status = getLetterStatus(guess, index);
-        if (status === 'correct') {
-          statusMap[char] = 'correct';
-        } else if (status === 'present' && statusMap[char] !== 'correct') {
-          statusMap[char] = 'present';
-        } else if (status === 'absent' && !statusMap[char]) {
-          statusMap[char] = 'absent';
-        }
-      });
-    });
-    return statusMap;
+  const resetGame = () => {
+    setSolution(getRandomWord());
+    setGuesses([]);
+    setCurrentGuess('');
+    setIsGameOver(false);
+    setIsWon(false);
+    localStorage.removeItem('wordle-pro-state');
   };
 
   return {
@@ -68,5 +96,6 @@ export const useGameState = () => {
     getKeyboardStatus,
     isGameOver,
     isWon,
+    resetGame,
   };
 };

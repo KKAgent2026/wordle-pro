@@ -1,19 +1,11 @@
 export const WORDS = [
-  'REACT',
-  'WORLD',
-  'SMART',
-  'BRAIN',
-  'THINK',
-  'GHOST',
-  'POWER',
-  'SOUND',
-  'LIGHT',
-  'SPACE',
-  'PLANT',
-  'DREAM',
-  'FLAME',
-  'NIGHT',
-  'CLOCK',
+  'REACT', 'WORLD', 'SMART', 'BRAIN', 'THINK', 'GHOST', 'POWER', 'SOUND', 'LIGHT', 'SPACE',
+  'PLANT', 'DREAM', 'FLAME', 'NIGHT', 'CLOCK', 'STONE', 'WATER', 'EARTH', 'RIVER', 'MOUNT',
+  'CLOUD', 'STORM', 'SHARP', 'BLADE', 'HEART', 'STEEL', 'BRICK', 'GLASS', 'PAPER', 'MUSIC',
+  'DANCE', 'STAGE', 'VOICE', 'WORDS', 'BOOKS', 'IMAGE', 'VIDEO', 'PHONE', 'TABLE', 'CHAIR',
+  'FLOOR', 'HOUSE', 'CANDY', 'FRUIT', 'BREAD', 'COFEE', 'DRINK', 'SMILE', 'LAUGH', 'HAPPY',
+  'CLEAN', 'FRESH', 'WHITE', 'BLACK', 'GREEN', 'BROWN', 'SMALL', 'LARGE', 'SHORT', 'CLEAR',
+  'QUIET', 'LUCKY', 'MAGIC', 'CRAZY', 'SUPER', 'READY', 'START', 'FINISH', 'BLOCK', 'TRACK',
 ];
 
 export const getRandomWord = () => {
@@ -21,9 +13,5 @@ export const getRandomWord = () => {
 };
 
 export const isValidWord = (word) => {
-  // For now, any 5-letter word is fine if we want a loose game, 
-  // but usually we check against a dictionary.
-  // Given the requirement "validation against a basic word list",
-  // I'll check if it's in our list or just 5 letters for simplicity if the list is small.
   return word.length === 5 && WORDS.includes(word.toUpperCase());
 };
